@@ -8,7 +8,8 @@ import (
 	"strconv"
 )
 
-const dayTemplate = `package day{{.Day}}
+const dayTemplate = `// Package day{{.Day}} for solution and test for the daily challenge.
+package day{{.Day}}
 
 import (
 	"aoc/internal/aoc"
@@ -37,15 +38,12 @@ func solvePart2(lines []string) string {
 const testTemplate = `package day{{.Day}}
 
 import (
-	"os"
-	"path/filepath"
+	"aoc/internal/aoc"
 	"testing"
 )
 
 func TestSample(t *testing.T) {
-	b, err := os.ReadFile(filepath.Join("..", "..", "testdata", "day{{.DayPadded}}_sample.txt"))
-	if err != nil { t.Fatal(err) }
-	lines := splitLines(string(b))
+	lines := aoc.ReadInputAsLines("day{{.Day}}_sample")
 	if got := solvePart1(lines); got == "TODO" {
 		t.Fatalf("part1 not implemented, got %q", got)
 	}
@@ -74,9 +72,9 @@ func main() {
 	}
 
 	// write .go
-	writeTemplate(filepath.Join(dir, "day"+dayPadded+".go"), dayTemplate, day, dayPadded)
+	writeTemplate(filepath.Join(dir, "day"+dayPadded+".go"), dayTemplate, dayPadded)
 	// write _test.go
-	writeTemplate(filepath.Join(dir, "day"+dayPadded+"_test.go"), testTemplate, day, dayPadded)
+	writeTemplate(filepath.Join(dir, "day"+dayPadded+"_test.go"), testTemplate, dayPadded)
 
 	// create empty input + sample files
 	os.WriteFile(filepath.Join("inputs", "day"+dayPadded), []byte{}, 0644)
@@ -85,7 +83,7 @@ func main() {
 	fmt.Printf("Scaffolded day %d in %s\n", day, dir)
 }
 
-func writeTemplate(path, src string, day int, dayPadded string) {
+func writeTemplate(path, src string, dayPadded string) {
 	tmpl := template.Must(template.New("").Parse(src))
 	f, err := os.Create(path)
 	if err != nil {
@@ -93,7 +91,7 @@ func writeTemplate(path, src string, day int, dayPadded string) {
 	}
 	defer f.Close()
 	tmpl.Execute(f, map[string]string{
-		"Day":       strconv.Itoa(day),
+		"Day":       dayPadded,
 		"DayPadded": dayPadded,
 	})
 }

@@ -1,5 +1,5 @@
 // Package aoc in cmd provides main function, registry for solutions and io reading.
-package aoc
+package main
 
 import (
 	"aoc/internal/aoc"
@@ -18,7 +18,8 @@ func main() {
 
 	s, ok := aoc.Get(*day)
 	if !ok {
-		log.Fatalf("no solution for day %d", *day)
+		fmt.Printf("no solution for day %d\n", *day)
+		return
 	}
 
 	path := *in
