@@ -27,6 +27,7 @@ func main() {
 	if path == "" {
 		path = filepath.Join("inputs", fmt.Sprintf("day%02d", *day))
 	}
+	fmt.Printf("Reading input from %s...\n", path)
 	input, err := aoc.ReadInput(path)
 	if err != nil {
 		log.Fatal(err)
