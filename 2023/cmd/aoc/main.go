@@ -2,6 +2,7 @@
 package main
 
 import (
+	_ "aoc/days/day01"
 	"aoc/internal/aoc"
 	"flag"
 	"fmt"
