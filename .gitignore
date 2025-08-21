@@ -1,0 +1,104 @@
+### Go ###
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Build / cache
+*.out
+*.o
+*.a
+*.lo
+*.la
+*.obj
+*.gch
+*.pch
+*.swp
+*.swo
+
+# Go workspace
+bin/
+pkg/
+*.log
+
+### Kotlin / Java ###
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+*.ipr
+*.iws
+
+# Gradle
+.gradle/
+build/
+out/
+
+# Maven
+target/
+
+# Kotlin specific
+.kotlinc/
+
+### Elixir ###
+/_build/
+/deps/
+erl_crash.dump
+*.ez
+*.beam
+*.app
+*.appup
+*.rel
+*.boot
+*.script
+*.config
+.coverage
+.elixir_ls/
+.mix/
+
+### Rust ###
+/target/
+**/*.rs.bk
+Cargo.lock
+
+### C++ ###
+# Object files
+*.o
+*.obj
+*.lo
+*.la
+*.slo
+
+# Libraries
+*.a
+*.lib
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+### Common ###
+# IDE/editor stuff
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
