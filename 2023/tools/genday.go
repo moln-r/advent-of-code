@@ -65,6 +65,13 @@ func main() {
 	}
 	dayPadded := fmt.Sprintf("%02d", day)
 
+	// check if files for the given day have been created already
+	_, err = os.Stat("inputs/day" + dayPadded)
+	if err == nil {
+		fmt.Printf("Day %d already exists, not overwriting\n", day)
+		return
+	}
+
 	// create days/dayNN
 	dir := filepath.Join("days", "day"+dayPadded)
 	if err := os.MkdirAll(dir, 0755); err != nil {
