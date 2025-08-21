@@ -21,7 +21,7 @@ func init() {
 type solver struct{}
 
 func (solver) Solve(input string) (string, string, error) {
-	lines := readInputAsLines(input)
+	lines := aoc.ReadInputAsLines(input)
 	return solvePart1(lines), solvePart2(lines), nil
 }
 
@@ -79,8 +79,8 @@ func main() {
 	writeTemplate(filepath.Join(dir, "day"+dayPadded+"_test.go"), testTemplate, day, dayPadded)
 
 	// create empty input + sample files
-	os.WriteFile(filepath.Join("inputs", "day"+dayPadded+".txt"), []byte{}, 0644)
-	os.WriteFile(filepath.Join("testdata", "day"+dayPadded+"_sample.txt"), []byte{}, 0644)
+	os.WriteFile(filepath.Join("inputs", "day"+dayPadded), []byte{}, 0644)
+	os.WriteFile(filepath.Join("testdata", "day"+dayPadded+"_sample"), []byte{}, 0644)
 
 	fmt.Printf("Scaffolded day %d in %s\n", day, dir)
 }
