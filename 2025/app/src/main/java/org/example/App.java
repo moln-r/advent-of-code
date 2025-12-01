@@ -3,22 +3,11 @@
  */
 package org.example;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
 public class App {
 
-    public static void main(String[] args) {
-        Day01.part1();
-    }
-
-    public static List<String> readFile(String name) {
-        try {
-            var resource = App.class.getClassLoader().getResource(name);
-            return Files.readAllLines(Path.of(resource.toURI()));
-        } catch (Exception e) {
-            throw new RuntimeException("could not read input");
-        }
-    }
+  static void main() {
+    var day1 = new Day01(true);
+    day1.part1();
+    day1.part2();
+  }
 }
