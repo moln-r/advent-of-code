@@ -1,10 +1,6 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Day03 extends Day {
 
@@ -20,44 +16,36 @@ public class Day03 extends Day {
 
   @Override
   public void part2() {
-    long sum = input.stream().map(this::jolt12WithRemoval).mapToLong(i -> i).sum();
+    var first = input.stream().map(this::cut).toList();
+
+    for (String line : first) {
+      if (needsWork(line)) {
+        System.out.println(line);
+      }
+    }
+
+    var some = input.stream().map(this::cut).map(this::easyRemove).toList();
+    var another = some.stream().map(this::finishUp).toList();
+    long sum = another.stream().map(Long::parseLong).mapToLong(i -> i).sum();
     log("day 3 part 2: " + sum);
     // 171012734629079 too low
-    // 171012734629079
+    // 172562798287789 too low
+    // 172584523753321 too low
   }
 
-  public long jolt12(String line) {
-    // find the greatest that has at least 11 te the right
-    var max =
-        greatest(line, 0, line.length() - 12).orElseThrow(() -> new RuntimeException("no max"));
+  private boolean needsWork(String line) {
+    var greatest = greatest(line, 0, line.length() - 1).get().value;
+    var first = line.substring(0, 1);
+    return !greatest.equals(first);
+  }
 
-    // get the 11 highest from the right side
-    var numbers = new ArrayList<Num>(12);
-    numbers.add(max);
-    for (var i = 0; i < 11; i++) {
-      var num =
-          greatestExcept(
-              line,
-              max.index + 1,
-              line.length() - 1,
-              numbers.stream().map(Num::index).collect(Collectors.toSet()));
-      numbers.add(num);
+  private String finishUp(StringAndMin stringAndMin) {
+    var number = stringAndMin.s;
+    if (stringAndMin.s.length() == 12) {
+      return stringAndMin.s;
     }
-    var jolt =
-        numbers.stream()
-            .sorted((Comparator.comparingInt(Num::index)))
-            .map(Num::value)
-            .collect(Collectors.joining());
-    return Long.parseLong(jolt);
-  }
 
-  public long jolt12WithRemoval(String line) {
-    // find the greatest that has at least 11 te the right
-    var max =
-        greatest(line, 0, line.length() - 12).orElseThrow(() -> new RuntimeException("no max"));
-
-    // remove the smallest number, starting from the left side until we have 12 numbers
-    var number = line.substring(max.index);
+    //    for (int valueToRemove = stringAndMin.min; valueToRemove <= 9; valueToRemove++) {
     while (number.length() > 12) {
       var smallest = smallest(number);
       // remove the smallest and change number
@@ -67,8 +55,115 @@ public class Day03 extends Day {
       var right = number.substring(smallest.index + 1);
       number = left + right;
     }
+    //    }
 
-    return Long.parseLong(number);
+    return number;
+  }
+
+  private Num smallest(String line) {
+    var minVal = 10;
+    var minIdx = -1;
+    for (int i = 0; i < line.length(); i++) {
+      var value = Integer.parseInt(String.valueOf(line.charAt(i)));
+      if (value < minVal) {
+        minVal = value;
+        minIdx = i;
+      }
+    }
+    return new Num(String.valueOf(minVal), minIdx);
+  }
+
+  // find the greatest that has at least 11 te the right
+  public String cut(String line) {
+    var index =
+        greatest(line, 0, line.length() - 12)
+            .map(Num::index)
+            .orElseThrow(() -> new RuntimeException("no max"));
+    return line.substring(index);
+  }
+
+  public StringAndMin easyRemove(String line) {
+    var greatest = greatest(line, 0, line.length() - 1);
+    var lastIndex = findLastHighIndex(line, greatest.get().getValue());
+
+    int i;
+    for (i = 0; i < 9; i++) {
+      var without = line.replace(String.valueOf(i), "");
+      if (without.length() < 12) {
+        return new StringAndMin(line, i);
+      }
+      if (without.length() == 12) {
+        return new StringAndMin(line, i);
+      }
+      line = without;
+    }
+    return new StringAndMin(line, i);
+  }
+
+  // find the greatest number from the left that has at least 11 neighbors to the right
+  // loop:
+  // set value high to the greatest and get all the indexes where they are
+  // remove number from greatest towards the last high number
+  // after removal if remaining's length is 12, return it
+  // once there is nothing to remove, high--, then loop again
+  public long fancyJolt(String line) {
+    // find the greatest that has at least 11 te the right
+    Num max =
+        greatest(line, 0, line.length() - 12).orElseThrow(() -> new RuntimeException("no max"));
+    String remaining = line.substring(max.index);
+
+    if (remaining.length() == 12) {
+      return Long.parseLong(remaining);
+    }
+
+    for (int high = max.getValue(); high >= 0; high--) {
+      remaining = shortenBetweenStartAndLastHigh(remaining, high);
+      if (remaining.length() == 12) {
+        break;
+      }
+    }
+
+    if (remaining.length() < 12) {
+      throw new RuntimeException("remaining is too short");
+    }
+
+    return Long.parseLong(remaining.substring(0, 12));
+  }
+
+  private String shortenBetweenStartAndLastHigh(String remaining, int high) {
+    var lastHighIndex = findLastHighIndex(remaining, high);
+    if (lastHighIndex == -1) {
+      return remaining;
+    }
+
+    for (int valueToRemove = 1;
+        remaining.length() > 12 && (valueToRemove < high || high == 1);
+        valueToRemove++) {
+      while (remaining.length() > 12) {
+        var indexToRemove = findIndexToRemove(remaining, valueToRemove, lastHighIndex);
+        if (indexToRemove == -1) {
+          break;
+        }
+        remaining = removeIndex(remaining, indexToRemove);
+        lastHighIndex--;
+      }
+    }
+    return remaining;
+  }
+
+  private String removeIndex(String line, int indexToRemove) {
+    var left = line.substring(0, indexToRemove);
+    var right = line.substring(indexToRemove + 1);
+    return left + right;
+  }
+
+  private int findIndexToRemove(String line, int valueToRemove, int lastIndex) {
+    for (int i = 1; i < lastIndex; i++) {
+      if (Integer.parseInt(String.valueOf(line.charAt(i))) == valueToRemove) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   private int jolt(String line) {
@@ -88,6 +183,17 @@ public class Day03 extends Day {
     return Math.max(left, right);
   }
 
+  private int findLastHighIndex(String line, int value) {
+    var index = -1;
+    for (int i = 1; i < line.length(); i++) {
+      var stringValue = String.valueOf(line.charAt(i));
+      if (Integer.parseInt(stringValue) == value) {
+        index = i;
+      }
+    }
+    return index;
+  }
+
   private Optional<Num> greatest(String line, int start, int end) {
     if (end < start) {
       return Optional.empty();
@@ -105,39 +211,13 @@ public class Day03 extends Day {
     return Num.from(maxVal, maxIdx);
   }
 
-  private Num smallest(String line) {
-    var minVal = 10;
-    var minIdx = -1;
-    for (int i = 0; i < line.length(); i++) {
-      var value = Integer.parseInt(String.valueOf(line.charAt(i)));
-      if (value < minVal) {
-        minVal = value;
-        minIdx = i;
-      }
-    }
-    return new Num(String.valueOf(minVal), minIdx);
-  }
-
-  private Num greatestExcept(String line, int start, int end, Set<Integer> exceptIdx) {
-    // this case we guarantee that start is lower than end
-    var maxVal = -1;
-    var maxIdx = -1;
-    for (int i = end; i >= start; i--) {
-      if (exceptIdx.contains(i)) {
-        continue;
-      }
-      var value = Integer.parseInt(String.valueOf(line.charAt(i)));
-      if (value > maxVal) {
-        maxVal = value;
-        maxIdx = i;
-      }
-    }
-    return new Num(String.valueOf(maxVal), maxIdx);
-  }
-
   private record Num(String value, int index) implements Comparable<Num> {
     private static Optional<Num> from(int v, int i) {
       return Optional.of(new Num(String.valueOf(v), i));
+    }
+
+    private int getValue() {
+      return Integer.parseInt(value);
     }
 
     @Override
@@ -145,4 +225,6 @@ public class Day03 extends Day {
       return this.index - o.index;
     }
   }
+
+  private record StringAndMin(String s, int min) {}
 }

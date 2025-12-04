@@ -20,15 +20,8 @@ public class Day03Test {
 
   @ParameterizedTest
   @MethodSource("testArguments")
-  void test(String line, long expected) {
-    var jolt = DAY.jolt12(line);
-    assertEquals(expected, jolt);
-  }
-
-  @ParameterizedTest
-  @MethodSource("testArguments")
-  void testWithRemoval(String line, long expected) {
-    var jolt = DAY.jolt12WithRemoval(line);
+  void testFancyJolt(String line, long expected) {
+    var jolt = DAY.fancyJolt(line);
     assertEquals(expected, jolt);
   }
 }
