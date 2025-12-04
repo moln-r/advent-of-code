@@ -6,14 +6,8 @@ package org.example;
 public class App {
 
   static void main() {
-    //    var day1 = new Day01(true);
-    //    day1.part1();
-    //    day1.part2();
-    //    var day2 = new Day02(true);
-    //    day2.part1();
-    //    day2.part2();
-    var day3 = new Day03(true);
-    day3.part1();
-    day3.part2();
+    var day = new Day04(true);
+    day.part1();
+    day.part2();
   }
 }
