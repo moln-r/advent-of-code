@@ -5,7 +5,10 @@ import java.util.Objects;
 
 public class Day04 extends Day {
 
+  private static final String EMPTY = ".";
   private static final String ROLL = "@";
+  private static final String REMOVABLE = "x";
+
   private static final long PART_1_LIMIT = 4L;
 
   public Day04(boolean debug) {
@@ -38,7 +41,40 @@ public class Day04 extends Day {
   }
 
   @Override
-  public void part2() {}
+  public void part2() {
+    int markCount = 0;
+    int mark = -1;
+    while (mark != 0) {
+      mark = markRemovable();
+      remove();
+      markCount += mark;
+    }
+    System.out.println("day 4 part 2: " + markCount);
+  }
+
+  private int markRemovable() {
+    int marks = 0;
+    for (int x = 0; x < input.size(); x++) {
+      for (int y = 0; y < input.get(x).length(); y++) {
+        if (!String.valueOf(input.get(x).charAt(y)).equals(ROLL)) {
+          continue;
+        }
+        if (accessible(x, y)) {
+          var newLine = new StringBuilder(input.get(x));
+          newLine.setCharAt(y, REMOVABLE.toCharArray()[0]);
+          this.input.set(x, newLine.toString());
+          marks++;
+        }
+      }
+    }
+    return marks;
+  }
+
+  private void remove() {
+    var updated = input.stream().map(line -> line.replace(REMOVABLE, EMPTY)).toList();
+    input.clear();
+    input.addAll(updated);
+  }
 
   private boolean accessible(int x, int y) {
     var rolls = countRolls(x, y);
@@ -50,7 +86,7 @@ public class Day04 extends Day {
         .map(d -> d.move(x, y))
         .map(cords -> at(cords[0], cords[1]))
         .filter(Objects::nonNull)
-        .filter(s -> s.equals(ROLL))
+        .filter(s -> s.equals(ROLL) || s.equals(REMOVABLE))
         .count();
   }
 
