@@ -6,7 +6,7 @@ package org.example;
 public class App {
 
   static void main() {
-    var day = new Day04(true);
+    var day = new Day05(true);
     day.part1();
     day.part2();
   }
