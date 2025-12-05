@@ -20,8 +20,8 @@ public class Day03Test {
 
   @ParameterizedTest
   @MethodSource("testArguments")
-  void testFancyJolt(String line, long expected) {
-    var jolt = DAY.fancyJolt(line);
-    assertEquals(expected, jolt);
+  void testJoltWhenFirstIsGreatest(String line, long expected) {
+    var jolt = DAY.joltForPart2(line);
+    assertEquals(expected, Long.parseLong(jolt));
   }
 }
