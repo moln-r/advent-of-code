@@ -12,8 +12,11 @@ public class Day03Test {
 
   static Stream<Arguments> testArguments() {
     return Stream.of(
+        Arguments.of("987654322221121", 987654322222L),
+        Arguments.of(
+            "5631465827645468355653355523535772463346671437436425546664765663657756643567465459577656563565556374",
+            977666656374L),
         Arguments.of("818181911112111", 888911112111L),
-        Arguments.of("987654321111111", 987654321111L),
         Arguments.of("234234234234278", 434234234278L),
         Arguments.of("811111111111119", 811111111119L));
   }
@@ -21,7 +24,7 @@ public class Day03Test {
   @ParameterizedTest
   @MethodSource("testArguments")
   void testJoltWhenFirstIsGreatest(String line, long expected) {
-    var jolt = DAY.joltForPart2(line);
+    var jolt = DAY.buildJolt(line);
     assertEquals(expected, Long.parseLong(jolt));
   }
 }

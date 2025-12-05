@@ -4,81 +4,84 @@ import java.util.Optional;
 
 public class Day03 extends Day {
 
+  public static final int JOLT_LENGTH = 12;
+
   public Day03(boolean debug) {
     super("03", debug);
   }
 
   @Override
   public void part1() {
-    var processed =
-        input.stream()
-            .map(
-                line -> {
-                  // first we need the greatest value
-                  var max =
-                      greatest(line, 0, line.length() - 1)
-                          .orElseThrow(() -> new RuntimeException("no max"));
-
-                  // then we look for the greatest in the left and then the right half
-                  var leftMax = greatest(line, 0, max.index - 1);
-                  var rightMax = greatest(line, max.index + 1, line.length() - 1);
-
-                  // we create two potential jolts: left+max vs max+right
-                  var left = leftMax.map(l -> Integer.parseInt(l.value + max.value)).orElse(-1);
-                  var right = rightMax.map(r -> Integer.parseInt(max.value + r.value)).orElse(-1);
-
-                  // return the greater value
-                  return Math.max(left, right);
-                });
+    // first we need the greatest value
+    var processed = input.stream().map(this::joltPart1);
     long sum = processed.mapToLong(i -> i).sum();
 
     log("day 3 part 1: " + sum);
   }
 
+  private int joltPart1(String line) {
+    var max =
+        greatest(line, 0, line.length() - 1).orElseThrow(() -> new RuntimeException("no max"));
+
+    // then we look for the greatest in the left and then the right half
+    var leftMax = greatest(line, 0, max.index - 1);
+    var rightMax = greatest(line, max.index + 1, line.length() - 1);
+
+    // we create two potential jolts: left+max vs max+right
+    var left = leftMax.map(l -> Integer.parseInt(l.value + max.value)).orElse(-1);
+    var right = rightMax.map(r -> Integer.parseInt(max.value + r.value)).orElse(-1);
+
+    // return the greater value
+    return Math.max(left, right);
+  }
+
   @Override
   public void part2() {
-    var jolts = input.stream().map(this::joltForPart2).toList();
-
-    var sum = jolts.stream().mapToLong(Long::parseLong).sum();
+    var sum = input.stream().map(this::buildJolt).mapToLong(Long::parseLong).sum();
     log("day 3 part 2: " + sum);
-    // 171012734629079 too low
-    // 172562798287789 too low
-    // 172584523753321 too low
-    // 172519679681899
-    // 169697055064753
-    // 171040377797011
   }
 
-  protected String joltForPart2(String line) {
-    // this must be the starting number
-    Num firstNum =
-        greatest(line, 0, line.length() - 12)
-            .orElseThrow(() -> new RuntimeException("no first num"));
+  protected String buildJolt(String line) {
+    StringBuilder jolt = new StringBuilder(JOLT_LENGTH);
 
-    var remaining = line.substring(firstNum.index);
+    for (int i = 0; i < line.length(); i++) {
+      char current = line.charAt(i);
+      if (current == '1' || current == '2') {
+        System.out.print("");
+      }
 
-    Num greatestOfLast =
-        greatest(remaining, remaining.length() - 11, remaining.length() - 1).get(); // guaranteed
+      // if jolt is empty, char goes in
+      if (jolt.isEmpty()) {
+        jolt.append(current);
+        continue;
+      }
 
-    int removeUntilIndex;
-    if (greatestOfLast.getValue() > firstNum.getValue()) {
-      removeUntilIndex = greatestOfLast.index;
-    } else {
-      removeUntilIndex = remaining.length();
+      // if we have no more remaining to choose from, we have to use them
+      int remainingCharCount = line.length() - i;
+      if (remainingCharCount + jolt.length() == JOLT_LENGTH) {
+        jolt.append(current);
+        continue;
+      }
+
+      int maxRemovable = jolt.length() + remainingCharCount - JOLT_LENGTH;
+      int removed = 0;
+      // if current is bigger than the last char, we have to remove it, but
+      // we cannot remove, if we are short on remaining options
+      while (maxRemovable > removed && !jolt.isEmpty()) {
+        char last = jolt.charAt(jolt.length() - 1);
+        if (last < current) {
+          jolt.deleteCharAt(jolt.length() - 1);
+          removed++;
+        } else {
+          break;
+        }
+      }
+      if (jolt.length() < JOLT_LENGTH) {
+        jolt.append(current);
+      }
     }
 
-    while (remaining.length() > 12) {
-      remaining = removeSmallestUntil(remaining, removeUntilIndex);
-      removeUntilIndex--;
-    }
-
-    return remaining;
-  }
-
-  private String removeIndex(String line, int indexToRemove) {
-    var left = line.substring(0, indexToRemove);
-    var right = line.substring(indexToRemove + 1);
-    return left + right;
+    return jolt.toString();
   }
 
   protected Optional<Num> greatest(String line, int start, int end) {
@@ -104,26 +107,9 @@ public class Day03 extends Day {
       return Optional.of(new Num(String.valueOf(v), i));
     }
 
-    private int getValue() {
-      return Integer.parseInt(value);
-    }
-
     @Override
     public int compareTo(Num o) {
       return this.index - o.index;
     }
-  }
-
-  private String removeSmallestUntil(String line, int index) {
-    var minVal = 10;
-    var minIdx = -1;
-    for (int i = index - 1; i >= 0; i--) {
-      var value = Integer.parseInt(String.valueOf(line.charAt(i)));
-      if (value <= minVal) {
-        minVal = value;
-        minIdx = i;
-      }
-    }
-    return removeIndex(line, minIdx);
   }
 }
