@@ -37,7 +37,7 @@ public class Day04 extends Day {
         }
       }
     }
-    System.out.println("day 4 part 1: " + accessibleCount);
+    log("day 4 part 1: " + accessibleCount);
   }
 
   @Override
@@ -49,7 +49,7 @@ public class Day04 extends Day {
       remove();
       markCount += mark;
     }
-    System.out.println("day 4 part 2: " + markCount);
+    log("day 4 part 2: " + markCount);
   }
 
   private int markRemovable() {

@@ -44,7 +44,7 @@ public class Day05 extends Day {
   public void part1() {
     var solution =
         toCheck.stream().filter(l -> ranges.stream().anyMatch(range -> range.in(l))).count();
-    System.out.println("day 5 part 1: " + solution);
+    log("day 5 part 1: " + solution);
   }
 
   @Override
@@ -62,8 +62,7 @@ public class Day05 extends Day {
       mergedRanges = newlyMerged;
     }
 
-    System.out.println(
-        "day 5 part 2: " + mergedRanges.stream().map(Range::size).mapToLong(i -> i).sum());
+    log("day 5 part 2: " + mergedRanges.stream().map(Range::size).mapToLong(i -> i).sum());
   }
 
   private List<Range> mergeRanges(List<Range> ranges) {

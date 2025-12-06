@@ -33,7 +33,7 @@ public abstract class Day {
 
   protected void debug(String message) {
     if (debug) {
-      System.out.println(message);
+      log(message);
     }
   }
 }
