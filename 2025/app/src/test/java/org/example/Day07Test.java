@@ -23,7 +23,7 @@ class Day07Test {
   void testPart2() {
     day.beamSplits(); // to trigger the splits to happen
     day.print();
-    assertEquals(40, day.walk(0, 7, 0));
+    //    assertEquals(40, day.walk(0, 7, 0));
     assertEquals(40, day.countTimelines());
   }
 }

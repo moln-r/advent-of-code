@@ -19,7 +19,7 @@ public class Day07 extends Day {
     this.manifold = new C[rows][columns];
     for (int row = 0; row < rows; row++) {
       for (int column = 0; column < columns; column++) {
-        manifold[row][column] = new C(input.get(row).charAt(column), 0);
+        manifold[row][column] = new C(input.get(row).charAt(column), 0L);
       }
     }
   }
@@ -66,9 +66,16 @@ public class Day07 extends Day {
 
     System.out.println("day 7 part 2: " + countTimelines());
     // 296320489 - too low
+    //     296320489
+    //    print();
+    for (int row = 0; row < rows; row++) {
+      for (int column = 0; column < columns; column++) {
+        manifold[row][column] = new C(input.get(row).charAt(column), 0);
+      }
+    }
   }
 
-  protected long countTimelines() {
+  protected long countTimelines_orig() {
     for (int row = 0; row < rows; row++) {
       for (int column = 0; column < columns; column++) {
         var current = manifold[row][column];
@@ -86,7 +93,34 @@ public class Day07 extends Day {
       }
     }
 
-    var count = 0;
+    var count = 0L;
+    int lastRow = manifold.length - 1;
+    for (int column = 0; column < manifold[lastRow].length; column++) {
+      count += manifold[lastRow][column].i;
+    }
+
+    return count;
+  }
+
+  protected long countTimelines() {
+    for (int row = 0; row < rows; row++) {
+      for (int column = columns - 1; column >= 0; column--) {
+        var current = manifold[row][column];
+
+        if (current.c == START) {
+          current.add(1);
+          break; // here we can break, because the start row has nothing else
+        } else if (current.c == BEAM) {
+          current.add(manifold[row - 1][column].i);
+        } else if (current.c == SPLITTER) {
+          var above = manifold[row - 1][column].i;
+          manifold[row][column - 1].add(above);
+          manifold[row][column + 1].add(above);
+        }
+      }
+    }
+
+    var count = 0L;
     int lastRow = manifold.length - 1;
     for (int column = 0; column < manifold[lastRow].length; column++) {
       count += manifold[lastRow][column].i;
@@ -120,7 +154,12 @@ public class Day07 extends Day {
     System.out.println();
     for (int row = 0; row < rows; row++) {
       for (int column = 0; column < columns; column++) {
-        System.out.print(manifold[row][column].c);
+        var current = manifold[row][column];
+        //        if (current.c == EMPTY || current.c == SPLITTER) {
+        System.out.print(current.c);
+        //        } else {
+        //          System.out.print(manifold[row][column].i);
+        //        }
       }
       System.out.println();
     }
@@ -129,14 +168,14 @@ public class Day07 extends Day {
 
   private static class C {
     private char c;
-    private int i;
+    private long i;
 
-    C(char c, int i) {
+    C(char c, long i) {
       this.c = c;
       this.i = i;
     }
 
-    void add(int i) {
+    void add(long i) {
       this.i += i;
     }
   }
