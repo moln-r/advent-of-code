@@ -38,18 +38,23 @@ public class Day08 extends Day {
     return all;
   }
 
-  protected void connect(TreeSet<Distance> distances, int limit) {
+  protected long connect(TreeSet<Distance> distances, int limit) {
     var count = 0;
     for (Distance distance : distances) {
-      connect(distance);
+      var shouldContinue = connect(distance);
+      if (!shouldContinue) {
+        // needed for part 2
+        return distance.jb1().x * distance.jb2().x;
+      }
       count++;
       if (count == limit) {
         break;
       }
     }
+    return 0L;
   }
 
-  private void connect(Distance distance) {
+  private boolean connect(Distance distance) {
     var junctionBox1 = distance.jb1();
     var circuit1 =
         circuits.stream()
@@ -68,6 +73,8 @@ public class Day08 extends Day {
       circuit1.mergeWith(circuit2);
       this.circuits.remove(circuit2);
     }
+
+    return this.circuits.size() != 1;
   }
 
   @Override
@@ -87,7 +94,10 @@ public class Day08 extends Day {
 
   @Override
   public long part2() {
-    return 0;
+    var distances = getDistancesSorted();
+    var solution = connect(distances, Integer.MAX_VALUE);
+    System.out.println("day 8 part 1: " + solution);
+    return solution;
   }
 
   protected static class JunctionBox {

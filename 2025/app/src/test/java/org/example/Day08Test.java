@@ -32,11 +32,9 @@ class Day08Test {
     assertEquals(7, circuits.stream().filter(circuit -> circuit.size() == 1).count());
   }
 
-  //  @Test
-  //  void testPart2() {
-  //    day.beamSplits(); // to trigger the splits to happen
-  //    day.print();
-  //    //    assertEquals(40, day.walk(0, 7, 0));
-  //    assertEquals(40, day.countTimelines());
-  //  }
+  @Test
+  void testPart2() {
+    var solution = day.connect(day.getDistancesSorted(), Integer.MAX_VALUE);
+    assertEquals(25272L, solution);
+  }
 }
