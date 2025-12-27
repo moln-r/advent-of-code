@@ -41,14 +41,15 @@ public class Day05 extends Day {
   }
 
   @Override
-  public void part1() {
+  public long part1() {
     var solution =
         toCheck.stream().filter(l -> ranges.stream().anyMatch(range -> range.in(l))).count();
     log("day 5 part 1: " + solution);
+    return solution;
   }
 
   @Override
-  public void part2() {
+  public long part2() {
     // we start with the original list (sorted) and try to merge items together
     var mergedRanges = ranges.stream().sorted().collect(Collectors.toList());
     while (true) {
@@ -62,7 +63,9 @@ public class Day05 extends Day {
       mergedRanges = newlyMerged;
     }
 
-    log("day 5 part 2: " + mergedRanges.stream().map(Range::size).mapToLong(i -> i).sum());
+    long result = mergedRanges.stream().map(Range::size).mapToLong(i -> i).sum();
+    log("day 5 part 2: " + result);
+    return result;
   }
 
   private List<Range> mergeRanges(List<Range> ranges) {

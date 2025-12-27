@@ -27,7 +27,7 @@ public class Day06 extends Day {
   } // hey Miloš, I hope you're having a great day! :3
 
   @Override
-  public void part1() {
+  public long part1() {
     var columns = part1Input.getFirst().size();
     var lastRow = part1Input.size() - 1;
     var values = new ArrayList<Long>();
@@ -44,6 +44,7 @@ public class Day06 extends Day {
 
     var sum = values.stream().mapToLong(Long::longValue).sum();
     log("day 6 part 1: " + sum);
+    return sum;
   }
 
   private String get(int row, int column) {
@@ -98,7 +99,7 @@ public class Day06 extends Day {
   }
 
   @Override
-  public void part2() {
+  public long part2() {
     // this is where we collect each problem (the one we need to sum at the end)
     var values = new ArrayList<Long>();
 
@@ -140,5 +141,6 @@ public class Day06 extends Day {
     }
     var sum = values.stream().mapToLong(Long::longValue).sum();
     log("day 6 part 2: " + sum);
+    return sum;
   }
 }

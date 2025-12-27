@@ -22,13 +22,17 @@ public class Day01 extends Day {
   }
 
   @Override
-  public void part1() {
-    log("day 1 part 1: " + counter.atZero);
+  public long part1() {
+    int result = counter.atZero;
+    log("day 1 part 1: " + result);
+    return result;
   }
 
   @Override
-  public void part2() {
-    log("day 1 part 2: " + counter.clicks);
+  public long part2() {
+    int clicks = counter.clicks;
+    log("day 1 part 2: " + clicks);
+    return clicks;
   }
 
   private enum Direction {

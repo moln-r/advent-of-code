@@ -19,15 +19,17 @@ public class Day02 extends Day {
   }
 
   @Override
-  public void part1() {
+  public long part1() {
     long sum = this.ranges.stream().map(Range::invalidSumPart1).mapToLong(Long::longValue).sum();
     log("day 2 part 1: " + sum);
+    return sum;
   }
 
   @Override
-  public void part2() {
+  public long part2() {
     long sum = this.ranges.stream().map(Range::invalidSumPart2).mapToLong(Long::longValue).sum();
     log("day 2 part 2: " + sum);
+    return sum;
   }
 
   private static class Range {

@@ -11,12 +11,13 @@ public class Day03 extends Day {
   }
 
   @Override
-  public void part1() {
+  public long part1() {
     // first we need the greatest value
     var processed = input.stream().map(this::joltPart1);
     long sum = processed.mapToLong(i -> i).sum();
 
     log("day 3 part 1: " + sum);
+    return sum;
   }
 
   private int joltPart1(String line) {
@@ -36,9 +37,10 @@ public class Day03 extends Day {
   }
 
   @Override
-  public void part2() {
+  public long part2() {
     var sum = input.stream().map(this::buildJolt).mapToLong(Long::parseLong).sum();
     log("day 3 part 2: " + sum);
+    return sum;
   }
 
   protected String buildJolt(String line) {

@@ -25,8 +25,10 @@ public class Day07 extends Day {
   }
 
   @Override
-  public void part1() {
-    System.out.println("day 7 part 1: " + beamSplits());
+  public long part1() {
+    long result = beamSplits();
+    System.out.println("day 7 part 1: " + result);
+    return result;
   }
 
   protected long beamSplits() {
@@ -61,18 +63,12 @@ public class Day07 extends Day {
   }
 
   @Override
-  public void part2() {
+  public long part2() {
     beamSplits(); // to trigger the splits to happen
 
-    System.out.println("day 7 part 2: " + countTimelines());
-    // 296320489 - too low
-    //     296320489
-    //    print();
-    for (int row = 0; row < rows; row++) {
-      for (int column = 0; column < columns; column++) {
-        manifold[row][column] = new C(input.get(row).charAt(column), 0);
-      }
-    }
+    long result = countTimelines();
+    System.out.println("day 7 part 2: " + result);
+    return result;
   }
 
   protected long countTimelines_orig() {

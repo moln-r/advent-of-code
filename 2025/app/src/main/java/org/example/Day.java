@@ -14,9 +14,9 @@ public abstract class Day {
     this.debug = debug;
   }
 
-  public abstract void part1();
+  public abstract long part1();
 
-  public abstract void part2();
+  public abstract long part2();
 
   private List<String> readFile(String name) {
     try {

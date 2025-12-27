@@ -25,7 +25,7 @@ public class Day04 extends Day {
    */
 
   @Override
-  public void part1() {
+  public long part1() {
     int accessibleCount = 0;
     for (int x = 0; x < input.size(); x++) {
       for (int y = 0; y < input.get(x).length(); y++) {
@@ -38,10 +38,11 @@ public class Day04 extends Day {
       }
     }
     log("day 4 part 1: " + accessibleCount);
+    return accessibleCount;
   }
 
   @Override
-  public void part2() {
+  public long part2() {
     int markCount = 0;
     int mark = -1;
     while (mark != 0) {
@@ -50,6 +51,7 @@ public class Day04 extends Day {
       markCount += mark;
     }
     log("day 4 part 2: " + markCount);
+    return markCount;
   }
 
   private int markRemovable() {
