@@ -15,6 +15,7 @@ public class Day10Test {
 
   @Test
   void test() {
-    Assertions.assertEquals(1, 11);
+    var solution = day.part1();
+    Assertions.assertEquals(7, solution);
   }
 }

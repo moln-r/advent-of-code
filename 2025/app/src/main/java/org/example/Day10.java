@@ -3,8 +3,12 @@ package org.example;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Day10 extends Day {
+
+  private static final char OFF = '.';
+  private static final char ON = '#';
 
   final List<Machine> machines;
 
@@ -33,7 +37,11 @@ public class Day10 extends Day {
     }
   }
 
-  record Light(String state) {}
+  record Light(String state) {
+    String init() {
+      return state.replace(ON, OFF);
+    }
+  }
 
   record Button(List<Integer> switches) {
     Button(String s) {
@@ -43,6 +51,18 @@ public class Day10 extends Day {
               .map(Integer::parseInt)
               .toList());
     }
+
+    String use(String light) {
+      var state = light.toCharArray();
+      for (Integer index : switches) {
+        if (state[index] == ON) {
+          state[index] = OFF;
+        } else if (state[index] == OFF) {
+          state[index] = ON;
+        }
+      }
+      return new String(state);
+    }
   }
 
   record Schematic(List<Integer> schemas) {
@@ -51,11 +71,50 @@ public class Day10 extends Day {
     }
   }
 
-  record Machine(Light light, List<Button> buttons, Schematic schematics) {}
+  record Machine(Light light, List<Button> buttons, Schematic schematics) {
+
+    public List<List<Button>> combinations(int size) {
+      List<List<Button>> result = new ArrayList<>();
+      backtrack(size, 0, new ArrayList<>(), result);
+      return result;
+    }
+
+    private void backtrack(int size, int start, List<Button> current, List<List<Button>> result) {
+      if (current.size() == size) {
+        result.add(new ArrayList<>(current));
+        return;
+      }
+
+      for (int i = start; i < buttons.size(); i++) {
+        current.add(buttons.get(i));
+        backtrack(size, i + 1, current, result);
+        current.removeLast();
+      }
+    }
+
+    int solve() {
+      for (int i = 1; i <= buttons.size(); i++) {
+        var combinations = combinations(i);
+        for (List<Button> combination : combinations) {
+          var state = this.light.init();
+          for (Button button : combination) {
+            state = button.use(state);
+          }
+          if (state.equals(light.state())) {
+            return i;
+          }
+        }
+      }
+      throw new RuntimeException("machine could not find solution");
+    }
+  }
 
   @Override
   public long part1() {
-    return 0;
+    AtomicLong solution = new AtomicLong(0L);
+    machines.forEach(m -> solution.addAndGet(m.solve()));
+    System.out.println("day 10 part 1: " + solution);
+    return solution.get();
   }
 
   @Override
